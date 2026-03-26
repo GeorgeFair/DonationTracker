@@ -1,0 +1,177 @@
+Donation Tracking Dashboard – Build Instructions
+1. Initialize Project
+
+Create project directory and install dependencies.
+
+mkdir donation-dashboard
+cd donation-dashboard
+npm init -y
+npm install express
+
+Create the following structure:
+
+donation-dashboard/
+├── server.js
+├── data.json
+├── package.json
+└── public/
+    ├── index.html
+    └── script.js
+
+Initialize data.json:
+
+[]
+2. Implement Backend (server.js)
+Requirements:
+Express server
+JSON parsing enabled
+Static file serving from /public
+File-based persistence using data.json
+Actions:
+Import required modules:
+express
+fs
+path
+Initialize app and middleware:
+Enable express.json()
+
+Serve static files:
+
+app.use(express.static('public'))
+Define helper logic:
+Read data from data.json
+Write updated data back to file
+3. Implement API Endpoints
+GET /donations
+Read contents of data.json
+Return JSON array
+POST /donations
+
+Accept JSON body:
+
+{
+  amount: number,
+  date: string,
+  category: string
+}
+Append new object to existing array
+Persist updated array to data.json
+Return success response
+Validation (minimum):
+Reject if amount is missing or not a number
+4. Run and Verify Backend
+
+Start server:
+
+node server.js
+
+Verify:
+
+Navigate to http://localhost:3000
+Confirm no server errors
+Test endpoints using browser or Postman
+5. Implement Frontend (public/index.html)
+Requirements:
+Form to submit donation
+Section to display donation list
+Canvas elements for charts
+Form Fields:
+Amount (number input)
+Date (date input)
+Category (text or dropdown)
+Layout Sections:
+Form
+Donation list container
+Chart containers (2 canvases)
+6. Implement Frontend Logic (public/script.js)
+On Page Load:
+Fetch /donations
+Store result in memory
+Render:
+Donation list
+Charts
+On Form Submission:
+Prevent default form behavior
+Collect input values
+Send POST request to /donations
+On success:
+Re-fetch updated data
+Re-render list and charts
+7. Chart Implementation (Chart.js)
+
+Include CDN in HTML:
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+Required Charts:
+Line Chart:
+X-axis: dates
+Y-axis: donation amounts (aggregated per day)
+Pie Chart:
+Group donations by category
+Show total per category
+Data Handling:
+Loop through donations
+Aggregate totals manually (no external libraries)
+8. Verify Application Behavior
+
+Confirm:
+
+Donations can be added
+Data persists after refresh
+Charts update after each submission
+No console errors
+9. Containerization (Docker)
+
+Create Dockerfile in root:
+
+FROM node:18
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 3000
+CMD ["node", "server.js"]
+Build Image:
+docker build -t donation-dashboard .
+Run Container:
+docker run -p 3000:3000 donation-dashboard
+
+Verify:
+
+App accessible at localhost:3000
+10. Deployment (AWS EC2)
+Steps:
+Launch EC2 instance (Ubuntu)
+Configure security group:
+Allow inbound traffic on port 3000
+Connect via SSH
+Install Docker:
+sudo apt update
+sudo apt install docker.io -y
+Transfer project files:
+Option A: scp
+Option B: clone from GitHub
+Build container:
+docker build -t donation-dashboard .
+Run container:
+docker run -d -p 3000:3000 donation-dashboard
+11. Final Verification
+
+Access:
+
+http://<EC2_PUBLIC_IP>:3000
+
+Confirm:
+
+Full functionality matches local version
+No runtime errors
+Completion Criteria
+
+The project is complete when:
+
+API endpoints function correctly
+Frontend interacts with backend successfully
+Data persists across sessions
+Charts accurately reflect stored data
+Application runs inside Docker container
+Application is accessible via AWS deployment
