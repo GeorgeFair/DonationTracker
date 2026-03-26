@@ -1,0 +1,71 @@
+Donation Tracking Dashboard – Project Notes
+Purpose
+
+The goal of this project is to build a simple donation tracking tool that helps visualize giving trends and totals over time. Churches often rely on clunky systems or spreadsheets, so this is meant to be a lightweight, more intuitive alternative that focuses on clarity and usability.
+
+This project should demonstrate the ability to:
+
+Build a full-stack application
+Work with basic data storage
+Visualize data in a meaningful way
+Deploy a containerized app to the cloud
+Core Features (MVP)
+
+Keep this tight. Don’t overbuild.
+
+Add Donation
+Input fields:
+Name (optional)
+Amount
+Date
+Category (tithe, offering, event, etc.)
+View Donations
+List of all donations
+Sorted by date (newest first)
+Dashboard
+Total donations
+Donations over time (line chart)
+Breakdown by category (pie chart)
+Tech Stack
+Backend: Node.js with Express
+Frontend: Basic HTML/CSS + JavaScript
+Charts: Chart.js
+Database: Start simple (JSON file or SQLite)
+Containerization: Docker
+Deployment: AWS (EC2 or Elastic Beanstalk)
+Backend Plan
+Set up Express server
+Create routes:
+GET /donations → return all donations
+POST /donations → add new donation
+Store data in a simple format (JSON file is fine for this)
+
+Focus on getting this working first before worrying about UI.
+
+Frontend Plan
+Simple form to submit donations
+Fetch and display donation list
+Use Chart.js for:
+Line chart (donations over time)
+Pie chart (category breakdown)
+
+Keep UI clean, not fancy.
+
+Docker Plan
+Create a Dockerfile
+Containerize the backend
+
+Make sure the app runs with:
+
+docker build -t donation-dashboard .
+docker run -p 3000:3000 donation-dashboard
+AWS Deployment Plan
+
+Keep this simple:
+
+Launch EC2 instance
+Install Docker
+Pull/run your container
+Open port 3000
+
+If time allows, attach a domain or clean URL.
