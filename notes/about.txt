@@ -1,7 +1,11 @@
 Donation Tracking Dashboard – Project Notes
 Purpose
 
-The goal of this project is to build a simple donation tracking tool that helps visualize giving trends and totals over time. Churches often rely on clunky systems or spreadsheets, so this is meant to be a lightweight, more intuitive alternative that focuses on clarity and usability.
+The goal of this project is to build a simple donation tracking 
+tool that helps visualize giving trends and totals over time. 
+Churches often rely on clunky systems or spreadsheets, so this is 
+meant to be a lightweight, more intuitive alternative that 
+focuses on clarity and usability.
 
 This project should demonstrate the ability to:
 
