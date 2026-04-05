@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Donation Insights</title>
+	<link rel="stylesheet" href="stylesheets/home.css">
+</head>
+<body class="insights-body">
+	<main class="insights-shell">
+		<header class="insights-header">
+			<div>
+				<p class="eyebrow">Donation Tracker</p>
+				<h1>Donor Type Insights</h1>
+				<p class="intro">Review what types of donors you currently have and how each group contributes.</p>
+			</div>
+			<a class="back-link" href="index.html">Back to Home</a>
+		</header>
+
+		<section class="stats-grid" id="statsGrid"></section>
+
+		<section class="insights-card" id="emptyState" hidden>
+			<h2>No donor data found yet</h2>
+			<p>Add donor records to data.json or local storage to populate this dashboard.</p>
+			<p class="sample-label">Accepted donor type fields:</p>
+			<code>donationType, frequency, type</code>
+		</section>
+
+		<section class="insights-card" id="chartSection" hidden>
+			<h2>Donors by Type</h2>
+			<div id="typeBars" class="type-bars"></div>
+		</section>
+
+		<section class="insights-card" id="tableSection" hidden>
+			<h2>Type Breakdown</h2>
+			<table>
+				<thead>
+					<tr>
+						<th>Donor Type</th>
+						<th>Donor Count</th>
+						<th>Total Amount</th>
+					</tr>
+				</thead>
+				<tbody id="typeTableBody"></tbody>
+			</table>
+		</section>
+	</main>
+
+	<script>
+		const money = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
+
+		function safeNumber(value) {
+			const parsed = Number.parseFloat(value);
+			return Number.isFinite(parsed) ? parsed : 0;
+		}
+
+		function normalizeDonor(row) {
+			const typeValue = row.donationType ?? row.frequency ?? row.type ?? "Unknown";
+			const type = String(typeValue).trim() || "Unknown";
+			const amount = safeNumber(row.amount ?? row.donationAmount ?? row.giftAmount ?? 0);
+
+			return { type, amount };
+		}
+
+		function extractRows(data) {
+			if (Array.isArray(data)) return data;
+			if (data && Array.isArray(data.donors)) return data.donors;
+			if (data && Array.isArray(data.records)) return data.records;
+			return [];
+		}
+
+		async function loadFromJson() {
+			const candidates = ["../data.json", "/data.json", "data.json"];
+
+			for (const path of candidates) {
+				try {
+					const response = await fetch(path, { cache: "no-store" });
+					if (!response.ok) continue;
+
+					const parsed = await response.json();
+					const rows = extractRows(parsed);
+					if (rows.length > 0) return rows;
+				} catch (_) {
+					// Keep trying fallback locations.
+				}
+			}
+
+			return [];
+		}
+
+		function loadFromLocalStorage() {
+			const keys = ["donors", "donorData", "donationTrackerDonors"];
+			for (const key of keys) {
+				try {
+					const raw = localStorage.getItem(key);
+					if (!raw) continue;
+					const parsed = JSON.parse(raw);
+					const rows = extractRows(parsed);
+					if (rows.length > 0) return rows;
+				} catch (_) {
+					// Ignore malformed local storage entries.
+				}
+			}
+
+			return [];
+		}
+
+		function renderStats(normalizedRows) {
+			const statsGrid = document.getElementById("statsGrid");
+			const totalsByType = new Map();
+			let totalAmount = 0;
+
+			for (const row of normalizedRows) {
+				const bucket = totalsByType.get(row.type) ?? { count: 0, amount: 0 };
+				bucket.count += 1;
+				bucket.amount += row.amount;
+				totalsByType.set(row.type, bucket);
+				totalAmount += row.amount;
+			}
+
+			const typeEntries = [...totalsByType.entries()].sort((a, b) => b[1].count - a[1].count);
+			const topType = typeEntries[0] ? typeEntries[0][0] : "N/A";
+			const avgDonation = normalizedRows.length ? totalAmount / normalizedRows.length : 0;
+
+			const cards = [
+				{ label: "Total Donors", value: String(normalizedRows.length) },
+				{ label: "Total Raised", value: money.format(totalAmount) },
+				{ label: "Average Donation", value: money.format(avgDonation) },
+				{ label: "Top Donor Type", value: topType }
+			];
+
+			statsGrid.innerHTML = cards
+				.map((card) => `<article class="stat-card"><p>${card.label}</p><h3>${card.value}</h3></article>`)
+				.join("");
+
+			return typeEntries;
+		}
+
+		function renderTypeBars(typeEntries) {
+			const typeBars = document.getElementById("typeBars");
+			const maxCount = Math.max(...typeEntries.map((entry) => entry[1].count));
+
+			typeBars.innerHTML = typeEntries
+				.map(([type, values]) => {
+					const width = maxCount > 0 ? (values.count / maxCount) * 100 : 0;
+					return `
+						<article class="type-row">
+							<div class="type-labels">
+								<strong>${type}</strong>
+								<span>${values.count} donors</span>
+							</div>
+							<div class="track"><div class="fill" style="width: ${width}%;"></div></div>
+							<p>${money.format(values.amount)}</p>
+						</article>
+					`;
+				})
+				.join("");
+		}
+
+		function renderTable(typeEntries) {
+			const tableBody = document.getElementById("typeTableBody");
+			tableBody.innerHTML = typeEntries
+				.map(
+					([type, values]) => `
+						<tr>
+							<td>${type}</td>
+							<td>${values.count}</td>
+							<td>${money.format(values.amount)}</td>
+						</tr>
+					`
+				)
+				.join("");
+		}
+
+		async function initInsights() {
+			const jsonRows = await loadFromJson();
+			const rows = jsonRows.length > 0 ? jsonRows : loadFromLocalStorage();
+			const normalizedRows = rows.map(normalizeDonor);
+
+			const emptyState = document.getElementById("emptyState");
+			const chartSection = document.getElementById("chartSection");
+			const tableSection = document.getElementById("tableSection");
+
+			if (normalizedRows.length === 0) {
+				emptyState.hidden = false;
+				return;
+			}
+
+			const typeEntries = renderStats(normalizedRows);
+			renderTypeBars(typeEntries);
+			renderTable(typeEntries);
+
+			chartSection.hidden = false;
+			tableSection.hidden = false;
+		}
+
+		initInsights();
+	</script>
+</body>
+</html>
