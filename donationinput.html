@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donor Information Intake</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <main class="page-shell">
+        <section class="card">
+            <h1>Donor Information</h1>
+            <p class="intro">Use this form to collect donor details for follow-up and reporting.</p>
+
+            <form class="donor-form" action="#" method="post">
+                <div class="form-grid">
+                    <label>
+                        Full name
+                        <input type="text" name="fullName" placeholder="Alex Morgan" required>
+                    </label>
+
+                    <label>
+                        Email address
+                        <input type="email" name="email" placeholder="alex@email.com" required>
+                    </label>
+
+                    <label>
+                        Phone number
+                        <input type="tel" name="phone" placeholder="(555) 123-4567">
+                    </label>
+
+                    <label>
+                        Donation amount
+                        <input type="number" name="amount" min="1" step="0.01" placeholder="100.00" required>
+                    </label>
+
+                    <label>
+                        Donation date
+                        <input type="date" name="donationDate" required>
+                    </label>
+
+                    <label>
+                        Donation type
+                        <select name="frequency" required>
+                            <option value="">Select one</option>
+                            <option value="one-time">One-time</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="quarterly">Quarterly</option>
+                            <option value="annual">Annual</option>
+                        </select>
+                    </label>
+
+                    <label>
+                        Preferred campaign
+                        <select name="campaign">
+                            <option value="">Select one</option>
+                            <option value="education">Education</option>
+                            <option value="health">Health</option>
+                            <option value="housing">Housing</option>
+                            <option value="general">General Fund</option>
+                        </select>
+                    </label>
+
+                    <label>
+                        Contact preference
+                        <select name="contactPreference">
+                            <option value="email">Email</option>
+                            <option value="phone">Phone</option>
+                            <option value="either">Either</option>
+                        </select>
+                    </label>
+                </div>
+
+                <label>
+                    Notes
+                    <textarea name="notes" rows="4" placeholder="Any context about this donor or gift"></textarea>
+                </label>
+
+                <label class="checkbox-row">
+                    <input type="checkbox" name="consent" required>
+                    I confirm this donor has agreed to be contacted.
+                </label>
+
+                <div class="actions">
+                    <button type="submit">Save Donor</button>
+                    <button type="reset" class="secondary">Clear Form</button>
+                </div>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

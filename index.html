@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donation Tracker</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            background: #f3f4f6;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            color: #1f2937;
+        }
+
+        main {
+            width: min(680px, 92vw);
+            background: #ffffff;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        .links {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        a {
+            text-decoration: none;
+            color: #0f766e;
+            font-weight: 600;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>Donation Tracker</h1>
+        <p>Select a page to continue:</p>
+        <div class="links">
+            <a href="public/donorIntake.html">Donor Information Intake</a>
+            <a href="public/searchDonors.html">Search Donors</a>
+            <a href="public/insightsPage.html">Donation Insights</a>
+        </div>
+    </main>
+</body>
+</html>
